@@ -4,19 +4,15 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { useTheme } from '@mui/material/styles';
 
+import { _appAuthors, _appInvoices, } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _appAuthors, _appInvoices, _appInstalled } from 'src/_mock';
-import { svgColorClasses } from 'src/components/svg-color';
 
-import { AppWidget } from '../app-widget';
 import { AppTopAuthors } from '../app-top-authors';
 import { AppNewInvoices } from '../app-new-invoices';
-
 import { AppAreaInstalled } from '../app-area-installed';
 import { AppWidgetSummary } from '../app-widget-summary';
 import { AppCurrentDownload } from '../app-current-download';
 
-import { AppTopInstalledCountries } from '../app-top-installed-countries';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +22,7 @@ export function OverviewAppView() {
 
   return (
     <DashboardContent maxWidth="xl">
-
+      <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
           <AppWidgetSummary
             title="Total active users"
@@ -144,37 +140,7 @@ export function OverviewAppView() {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AppTopRelated title="Related applications" list={_appRelated} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AppTopInstalledCountries title="Top installed countries" list={_appInstalled} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <AppTopAuthors title="Top authors" list={_appAuthors} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
-            <AppWidget
-              title="Conversion"
-              total={38566}
-              icon="solar:user-rounded-bold"
-              chart={{ series: 48 }}
-            />
-
-            <AppWidget
-              title="Applications"
-              total={55566}
-              icon="solar:letter-bold"
-              chart={{
-                series: 75,
-                colors: [theme.vars.palette.info.light, theme.vars.palette.info.main],
-              }}
-              sx={{ bgcolor: 'info.dark', [`& .${svgColorClasses.root}`]: { color: 'info.light' } }}
-            />
-          </Box>
         </Grid>
       </Grid>
     </DashboardContent>
