@@ -31,6 +31,8 @@ const fetcher = async (url) => {
 export function OverviewAppView() {
   const theme = useTheme();
 
+  const currentYear = String(new Date().getFullYear());
+
   const { data, error } = useSWR('/api/analytics/app-overview', fetcher, {
     revalidateOnFocus: false,
     refreshInterval: 15 * 60 * 1000,
@@ -110,8 +112,14 @@ export function OverviewAppView() {
             subheader="iOS vs Android"
             chart={{
               series: [
-                { label: 'iOS', value: installed.apple },
-                { label: 'Android', value: installed.google },
+                {
+                  label: 'iOS',
+                  value: installed.apple,
+                },
+                {
+                  label: 'Android',
+                  value: installed.google,
+                },
               ],
             }}
           />
@@ -119,47 +127,30 @@ export function OverviewAppView() {
 
         <Grid size={{ xs: 12, md: 6, lg: 8 }}>
           <AppAreaInstalled
-            title="Area installed"
-            subheader="(+43%) than last year"
+            title="Revenue overview"
+            subheader="Gross revenue vs refunds"
             chart={{
-              categories: [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-                'Aug',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dec',
-              ],
+              years: [currentYear],
               series: [
                 {
-                  name: '2022',
-                  data: [
-                    { name: 'Asia', data: [12, 10, 18, 22, 20, 12, 8, 21, 20, 14, 15, 16] },
-                    { name: 'Europe', data: [12, 10, 18, 22, 20, 12, 8, 21, 20, 14, 15, 16] },
-                    { name: 'Americas', data: [12, 10, 18, 22, 20, 12, 8, 21, 20, 14, 15, 16] },
+                  year: currentYear,
+                  granularity: 'month',
+                  categories: [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec',
                   ],
-                },
-                {
-                  name: '2023',
-                  data: [
-                    { name: 'Asia', data: [6, 18, 14, 9, 20, 6, 22, 19, 8, 22, 8, 17] },
-                    { name: 'Europe', data: [6, 18, 14, 9, 20, 6, 22, 19, 8, 22, 8, 17] },
-                    { name: 'Americas', data: [6, 18, 14, 9, 20, 6, 22, 19, 8, 22, 8, 17] },
-                  ],
-                },
-                {
-                  name: '2024',
-                  data: [
-                    { name: 'Asia', data: [6, 20, 15, 18, 7, 24, 6, 10, 12, 17, 18, 10] },
-                    { name: 'Europe', data: [6, 20, 15, 18, 7, 24, 6, 10, 12, 17, 18, 10] },
-                    { name: 'Americas', data: [6, 20, 15, 18, 7, 24, 6, 10, 12, 17, 18, 10] },
-                  ],
+                  revenue: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  refunds: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 },
               ],
             }}
@@ -171,11 +162,25 @@ export function OverviewAppView() {
             title="New Invoices"
             tableData={_appInvoices}
             headCells={[
-              { id: 'id', label: 'Invoice ID' },
-              { id: 'category', label: 'Category' },
-              { id: 'price', label: 'Price' },
-              { id: 'status', label: 'Status' },
-              { id: '' },
+              {
+                id: 'id',
+                label: 'Invoice ID',
+              },
+              {
+                id: 'category',
+                label: 'Category',
+              },
+              {
+                id: 'price',
+                label: 'Price',
+              },
+              {
+                id: 'status',
+                label: 'Status',
+              },
+              {
+                id: '',
+              },
             ]}
           />
         </Grid>
