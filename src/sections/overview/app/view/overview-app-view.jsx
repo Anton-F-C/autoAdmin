@@ -1,10 +1,11 @@
 'use client';
 
-import Box from '@mui/material/Box';
+import useSWR from 'swr';
+
 import Grid from '@mui/material/Grid';
 import { useTheme } from '@mui/material/styles';
 
-import { _appAuthors, _appInvoices, } from 'src/_mock';
+import { _appAuthors, _appInvoices } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { AppTopAuthors } from '../app-top-authors';
@@ -13,37 +14,79 @@ import { AppAreaInstalled } from '../app-area-installed';
 import { AppWidgetSummary } from '../app-widget-summary';
 import { AppCurrentDownload } from '../app-current-download';
 
+// ----------------------------------------------------------------------
+
+const fetcher = async (url) => {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+
+  return response.json();
+};
 
 // ----------------------------------------------------------------------
 
 export function OverviewAppView() {
-
   const theme = useTheme();
+
+  const { data, error } = useSWR('/api/analytics/app-overview', fetcher, {
+    revalidateOnFocus: false,
+    refreshInterval: 15 * 60 * 1000,
+  });
+
+  const appMetrics = data?.appMetrics;
+
+  const activeUsers = appMetrics?.activeUsers ?? {
+    total: 0,
+    apple: 0,
+    google: 0,
+    available: false,
+  };
+
+  const installed = appMetrics?.installed ?? {
+    total: 0,
+    apple: 0,
+    google: 0,
+    available: false,
+  };
+
+  const downloads = appMetrics?.downloads ?? {
+    total: 0,
+    apple: 0,
+    google: 0,
+    available: false,
+  };
+
+  if (error) {
+    console.error('Failed to load dashboard overview:', error);
+  }
 
   return (
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 4 }}>
           <AppWidgetSummary
-            title="Total active users"
-            percent={2.6}
-            total={18765}
+            title="Active users"
+            percent={0}
+            total={activeUsers.total}
             chart={{
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [15, 18, 12, 51, 68, 11, 39, 37],
+              series: [0, 0, 0, 0, 0, 0, 0, 0],
             }}
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
           <AppWidgetSummary
-            title="Total installed"
-            percent={0.2}
-            total={4876}
+            title="Installed audience"
+            percent={0}
+            total={installed.total}
             chart={{
               colors: [theme.palette.info.main],
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [20, 41, 63, 33, 28, 35, 50, 46],
+              series: [0, 0, 0, 0, 0, 0, 0, 0],
             }}
           />
         </Grid>
@@ -51,26 +94,24 @@ export function OverviewAppView() {
         <Grid size={{ xs: 12, md: 4 }}>
           <AppWidgetSummary
             title="Total downloads"
-            percent={-0.1}
-            total={678}
+            percent={0}
+            total={downloads.total}
             chart={{
               colors: [theme.palette.error.main],
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [18, 19, 31, 8, 16, 37, 12, 33],
+              series: [0, 0, 0, 0, 0, 0, 0, 0],
             }}
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <AppCurrentDownload
-            title="Current download"
-            subheader="Downloaded by operating system"
+            title="Installed audience"
+            subheader="iOS vs Android"
             chart={{
               series: [
-                { label: 'Mac', value: 12244 },
-                { label: 'Window', value: 53345 },
-                { label: 'iOS', value: 44313 },
-                { label: 'Android', value: 78343 },
+                { label: 'iOS', value: installed.apple },
+                { label: 'Android', value: installed.google },
               ],
             }}
           />
